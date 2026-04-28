@@ -1,0 +1,506 @@
+"""E8 root system: generation, classification, Dynkin coordinates, and triality."""
+
+import numpy as np
+
+TRIALITY_SECTOR_MAP = {1: '8v8v', 2: '8s8s', 3: '8c8c'}
+
+E8_SIMPLE_ROOTS = np.array([
+    [0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5],
+    [1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, -1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, -1.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, -1.0, 1.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.0, -1.0, 1.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 1.0, 0.0],
+])
+
+E8_CARTAN_MATRIX_KNOWN = np.array([
+    [ 2,  0, -1,  0,  0,  0,  0,  0],
+    [ 0,  2,  0, -1,  0,  0,  0,  0],
+    [-1,  0,  2, -1,  0,  0,  0,  0],
+    [ 0, -1, -1,  2, -1,  0,  0,  0],
+    [ 0,  0,  0, -1,  2, -1,  0,  0],
+    [ 0,  0,  0,  0, -1,  2, -1,  0],
+    [ 0,  0,  0,  0,  0, -1,  2, -1],
+    [ 0,  0,  0,  0,  0,  0, -1,  2],
+], dtype=int)
+
+
+def generate_roots():
+    """Generate all 240 roots of the E8 root system in R^8.
+
+    Returns: ndarray of shape (240, 8).
+    """
+    roots = []
+    # 112 integer roots: ±e_i ± e_j  (i < j)
+    for i in range(8):
+        for j in range(i + 1, 8):
+            for s1 in [-1, 1]:
+                for s2 in [-1, 1]:
+                    r = np.zeros(8)
+                    r[i] = s1
+                    r[j] = s2
+                    roots.append(r)
+    # 128 half-integer roots: (±½)^8 with even number of minus signs
+    for i in range(256):
+        signs = np.array([1 if (i & (1 << k)) else -1 for k in range(8)])
+        if np.prod(signs) == 1:
+            roots.append(signs * 0.5)
+    return np.array(roots)
+
+
+def cartan_matrix(simple_roots=None):
+    """Compute the Cartan matrix C[i,j] = <α_i, α_j> from simple roots."""
+    if simple_roots is None:
+        simple_roots = E8_SIMPLE_ROOTS
+    n = len(simple_roots)
+    C = np.zeros((n, n), dtype=int)
+    for i in range(n):
+        for j in range(n):
+            C[i, j] = int(np.round(np.dot(simple_roots[i], simple_roots[j])))
+    return C
+
+
+def dynkin_coords(roots, simple_roots=None):
+    """Convert roots from R^8 coordinates to Dynkin (simple-root) coordinates.
+
+    Returns: integer ndarray of shape (n_roots, 8).
+    """
+    if simple_roots is None:
+        simple_roots = E8_SIMPLE_ROOTS
+    inv_simple = np.linalg.inv(simple_roots.T)
+    return np.array([np.round(inv_simple @ r).astype(int) for r in roots])
+
+
+def positive_root_indices(c_coords):
+    """Return indices of positive roots (first nonzero Dynkin coord > 0)."""
+    pos = []
+    for i, c in enumerate(c_coords):
+        nz = np.nonzero(c)[0]
+        if len(nz) > 0 and c[nz[0]] > 0:
+            pos.append(i)
+    return np.array(pos, dtype=int)
+
+
+def root_lookup(roots, tol=1e-4):
+    """Build a dict mapping rounded root tuple -> index."""
+    lut = {}
+    for i, r in enumerate(roots):
+        lut[tuple(np.round(r, 5))] = i
+    return lut
+
+
+def classify_root_triality(root):
+    """Classify an E8 root into a D4×D4 triality sector.
+
+    Returns one of: 'D4xD4', '8v8v', '8s8s', '8c8c'.
+    """
+    root = np.round(root, 3)
+    is_half = np.all(np.abs(np.abs(root) - 0.5) < 0.01)
+    if is_half:
+        k1 = int(np.sum(root[:4] < 0))
+        k2 = int(np.sum(root[4:] < 0))
+        if k1 % 2 == 0 and k2 % 2 == 0:
+            return '8s8s'
+        else:
+            return '8c8c'
+    else:
+        nz = np.where(np.abs(root) > 0.01)[0]
+        if len(nz) == 2:
+            i, j = nz
+            if (i < 4) != (j < 4):
+                return '8v8v'
+        return 'D4xD4'
+
+
+def extract_root_vectors(f_idx, f_val):
+    """Extract positive root vectors from structure constants.
+
+    Uses [W_k, U_a] = alpha_a[k] * V_a  =>  f^{k, 8+a}_{128+a} = alpha_a[k].
+    """
+    import torch
+    pos_roots = np.zeros((120, 8))
+    f_i = f_idx[0].cpu().numpy() if isinstance(f_idx, torch.Tensor) else f_idx[0]
+    f_j = f_idx[1].cpu().numpy() if isinstance(f_idx, torch.Tensor) else f_idx[1]
+    f_k = f_idx[2].cpu().numpy() if isinstance(f_idx, torch.Tensor) else f_idx[2]
+    fv = f_val.cpu().numpy() if isinstance(f_val, torch.Tensor) else f_val
+    for n in range(len(fv)):
+        i, j, k = int(f_i[n]), int(f_j[n]), int(f_k[n])
+        if i < 8 and 8 <= j < 128 and k == 128 + (j - 8):
+            pos_roots[j - 8, i] = fv[n]
+    return pos_roots
+
+
+def find_triality_roots(pos_roots):
+    """Find one representative positive root index per triality sector.
+
+    Returns dict mapping sector name -> (root_index, root_vector).
+    """
+    reps = {}
+    for idx in range(120):
+        root = pos_roots[idx]
+        if np.linalg.norm(root) < 0.01:
+            continue
+        sector = classify_root_triality(root)
+        if sector != 'D4xD4' and sector not in reps:
+            reps[sector] = (idx, root)
+        if len(reps) == 3:
+            break
+    return reps
+
+
+# ─── E_7 × SU(2) ⊂ E_8 embedding (Step 18 / EIX coset) ───────────
+
+
+# Canonical Step-18 choice of EIX SU(2) generator and U(1) ⊂ E_7 splitter.
+# The SU(2) is generated by α_su2 (a regular E_8 root); E_7 is its
+# centraliser.  H_LAMBDA is one representative Cartan direction inside
+# E_7 that breaks E_7 → E_6 × U(1) and labels the 4 blocks of (56, 2).
+# See `tools/tree_level_rho_eix_scan.py` for the rationale.
+EIX_ALPHA_SU2 = np.array([1.0, 1.0, 0, 0, 0, 0, 0, 0])
+EIX_H_LAMBDA = np.array([1.0, -1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]) / np.sqrt(28.0)
+
+
+def _ensure_pos_roots(pos_roots):
+    """Resolve a (120, 8) positive-root array; build from constants if None."""
+    if pos_roots is not None:
+        return np.asarray(pos_roots, dtype=np.float64)
+    from .algebra import (
+        load_structure_constants_numpy,
+        extract_pos_roots_numpy,
+    )
+    f_idx_np, f_val_np = load_structure_constants_numpy("e8_constants.pt")
+    return extract_pos_roots_numpy(f_idx_np, f_val_np)
+
+
+def e7_su2_embedding(pos_roots=None,
+                     alpha_su2=EIX_ALPHA_SU2,
+                     u1_splitter=EIX_H_LAMBDA):
+    """Return the explicit E₇ × SU(2) ⊂ E₈ embedding (Step 18 / EIX seed).
+
+    The 248-dim basis convention used throughout ``e8sim`` is:
+      indices 0..7    — Cartan generators H_0, …, H_7 (orthonormal in R^8);
+      indices 8..127  — root generators E_α for α the k-th positive E_8
+                        root in the order of ``extract_pos_roots_numpy``;
+      indices 128..247 — root generators E_{−α} for the same ordering.
+
+    With ``alpha_su2 = (1, 1, 0, …, 0)`` (the canonical EIX choice; see
+    ``docs/theory-wip-p5.md`` §D.2 and the EIX m^+ extraction in
+    ``debug_plan/scripts/e3_orbit_selection.py``) the decomposition is:
+
+      * SU(2) (3 generators):
+            su2_basis[0] = H_{α_su2} / ‖α_su2‖   (Cartan slice)
+            su2_basis[1] = E_{α_su2}
+            su2_basis[2] = E_{−α_su2}
+      * E_7 (133 generators):
+            7 Cartan directions orthogonal to α_su2 in R^8;
+            2 × 63 = 126 root generators E_{±β} for β ⟂ α_su2.
+      * m = (56, 2) tangent space (112 generators):
+            2 × 56 = 112 root generators E_{±γ} for γ neither ⟂ α_su2
+            nor ±α_su2.
+
+    Parameters
+    ----------
+    pos_roots : (120, 8) ndarray or None
+        Positive E_8 roots in the order matching ``e8_constants.pt``.
+        If ``None`` (default), the roots are loaded from the canonical
+        constants file.
+    alpha_su2 : (8,) ndarray
+        E_8 root vector that generates the EIX SU(2) factor.  Must lie
+        in the E_8 root system; must give a 126-root centraliser.
+        Default ``(1,1,0,…,0)`` is verified GO in the Phase 0 scan.
+    u1_splitter : (8,) ndarray
+        Cartan direction in R^8 used to label the four E_6 × U(1) blocks
+        of m by their U(1)-charge.  Must be orthogonal to ``alpha_su2``
+        in R^8.  Default ``(1,−1,2,2,2,2,2,2)/√28`` (the H_lambda found
+        in the Phase 0 scan; gives a clean 4-bin split of the 56
+        positive m-roots).
+
+    Returns
+    -------
+    e7_basis : (133, 248) float64
+        Each row is a unit vector in the 248-dim basis lying in the E_7
+        subalgebra.
+    su2_basis : (3, 248) float64
+        Three generators spanning the EIX SU(2) factor in the order
+        ``(H_su2, E_+, E_−)``.
+    m_basis : (112, 248) float64
+        Spans the (56, 2) tangent space; orthogonal to ``e7_basis`` and
+        ``su2_basis`` *in the canonical 248-basis inner product* (which
+        equals the negative-Killing form on the compact E_8 up to an
+        overall positive multiple — see e.g. P5 §D.4.1).
+    block_labels : (112,) int8
+        For each row of ``m_basis``, an index in {0, 1, 2, 3} grouping
+        the row into one of the four ``E_6 × U(1)`` blocks of (56, 2)
+        induced by ``u1_splitter`` (smallest |q| → 0; largest |q| → 3).
+
+    Verification
+    ------------
+    The function asserts: dim(e7) + dim(su2) + dim(m) = 248; all bases
+    are pairwise orthogonal in the 248-basis; ``alpha_su2`` is a valid
+    E_8 root; ``u1_splitter`` is orthogonal to ``alpha_su2``; the m
+    block-labeling produces exactly 4 distinct |q| values.
+    """
+    pos = _ensure_pos_roots(pos_roots)
+    n_pos = pos.shape[0]
+    assert n_pos == 120, f"expected 120 positive roots, got {n_pos}"
+
+    alpha_su2 = np.asarray(alpha_su2, dtype=np.float64)
+    u1_splitter = np.asarray(u1_splitter, dtype=np.float64)
+    assert alpha_su2.shape == (8,)
+    assert u1_splitter.shape == (8,)
+    assert abs(np.dot(alpha_su2, u1_splitter)) < 1e-9, \
+        "u1_splitter must be orthogonal to alpha_su2 in R^8"
+
+    norm_sq = float(np.dot(alpha_su2, alpha_su2))
+    norm = np.sqrt(norm_sq)
+    assert abs(norm_sq - 2.0) < 1e-9, \
+        f"alpha_su2 must have norm² = 2 (E_8 root); got {norm_sq}"
+
+    # Locate alpha_su2 (and its negative) in the positive root list.
+    su2_pos_idx = None
+    for k in range(n_pos):
+        if np.allclose(pos[k], alpha_su2, atol=1e-9):
+            su2_pos_idx = k
+            break
+    assert su2_pos_idx is not None, \
+        "alpha_su2 is not a positive E_8 root in the canonical ordering"
+
+    # Classify every other positive root into E_7 (orth to alpha_su2)
+    # or m (non-orth, non-±alpha_su2).
+    e7_pos_idx, m_pos_idx = [], []
+    for k in range(n_pos):
+        if k == su2_pos_idx:
+            continue
+        dot = float(np.dot(pos[k], alpha_su2))
+        if abs(dot) < 1e-9:
+            e7_pos_idx.append(k)
+        else:
+            m_pos_idx.append(k)
+    e7_pos_idx = np.array(e7_pos_idx, dtype=int)
+    m_pos_idx = np.array(m_pos_idx, dtype=int)
+    assert len(e7_pos_idx) == 63, \
+        f"expected 63 positive E_7 roots; got {len(e7_pos_idx)}"
+    assert len(m_pos_idx) == 56, \
+        f"expected 56 positive m-roots; got {len(m_pos_idx)}"
+
+    # ─── SU(2) basis ──────────────────────────────────────────
+    su2_basis = np.zeros((3, 248), dtype=np.float64)
+    # Cartan slice along alpha_su2 (unit vector in R^8 ⊂ R^248)
+    su2_basis[0, :8] = alpha_su2 / norm
+    # E_+α and E_-α basis vectors (already orthonormal in our convention)
+    su2_basis[1, 8 + su2_pos_idx] = 1.0
+    su2_basis[2, 128 + su2_pos_idx] = 1.0
+
+    # ─── E_7 basis ──────────────────────────────────────────
+    e7_basis = np.zeros((133, 248), dtype=np.float64)
+
+    # 7 Cartan generators orthogonal to alpha_su2 / ‖alpha_su2‖.
+    # Use Gram-Schmidt against alpha_su2 from the standard 8 unit vectors.
+    cartan_e7 = []
+    a_hat = alpha_su2 / norm
+    for k in range(8):
+        v = np.zeros(8)
+        v[k] = 1.0
+        v = v - np.dot(v, a_hat) * a_hat
+        for u in cartan_e7:
+            v = v - np.dot(v, u) * u
+        n = np.linalg.norm(v)
+        if n > 1e-9:
+            cartan_e7.append(v / n)
+    assert len(cartan_e7) == 7, \
+        f"expected 7 E_7 Cartan directions; got {len(cartan_e7)}"
+    for i, v in enumerate(cartan_e7):
+        e7_basis[i, :8] = v
+
+    # 126 root generators E_{±β} for β ⟂ alpha_su2.
+    row = 7
+    for k in e7_pos_idx:
+        e7_basis[row, 8 + k] = 1.0
+        row += 1
+        e7_basis[row, 128 + k] = 1.0
+        row += 1
+    assert row == 133, f"E_7 basis filled to {row}, expected 133"
+
+    # ─── m basis ──────────────────────────────────────────
+    m_basis = np.zeros((112, 248), dtype=np.float64)
+    row = 0
+    for k in m_pos_idx:
+        m_basis[row, 8 + k] = 1.0
+        row += 1
+        m_basis[row, 128 + k] = 1.0
+        row += 1
+    assert row == 112, f"m basis filled to {row}, expected 112"
+
+    # ─── Block labels for m ────────────────────────────────
+    # Cluster the 56 positive m-roots by |q| = |β · u1_splitter|
+    # (charge under the chosen U(1) ⊂ E_7) and propagate the label to
+    # the corresponding negative root partner.
+    abs_q = np.abs(pos[m_pos_idx] @ u1_splitter)
+    uniq = []
+    for q in abs_q:
+        match = None
+        for j, qj in enumerate(uniq):
+            if abs(q - qj) < 1e-6:
+                match = j
+                break
+        if match is None:
+            uniq.append(float(q))
+    assert len(uniq) == 4, \
+        f"u1_splitter produces {len(uniq)} |q| bins, expected 4 " \
+        f"(an E_6 × U(1) splitter must give 4 blocks of (56,2))"
+    # Sort bins by |q| ascending → label 0..3.
+    order = sorted(range(4), key=lambda j: uniq[j])
+    label_of_uniq = {idx: rank for rank, idx in enumerate(order)}
+
+    block_labels = np.zeros(112, dtype=np.int8)
+    for i_pos, k in enumerate(m_pos_idx):
+        q = abs_q[i_pos]
+        for j, qj in enumerate(uniq):
+            if abs(q - qj) < 1e-6:
+                lbl = label_of_uniq[j]
+                break
+        block_labels[2 * i_pos] = lbl
+        block_labels[2 * i_pos + 1] = lbl
+
+    # ─── Cross-orthogonality sanity check ─────────────────────
+    # In our 248-basis the vectors are pairwise orthogonal under the
+    # standard inner product (which matches the negative-Killing form
+    # on compact E_8 in this orthonormal Chevalley basis).
+    full = np.vstack([e7_basis, su2_basis, m_basis])
+    assert full.shape == (248, 248)
+    gram = full @ full.T
+    off = gram - np.diag(np.diag(gram))
+    assert np.max(np.abs(off)) < 1e-9, \
+        f"basis blocks are not orthogonal: max off-diag = {np.max(np.abs(off))}"
+    # All diagonal entries should be exactly 1.
+    assert np.allclose(np.diag(gram), 1.0, atol=1e-9), \
+        "basis vectors are not unit-normalised"
+
+    return e7_basis, su2_basis, m_basis, block_labels
+
+
+# ─── Root-system combinatorics (strongly-orthogonal sets) ──────────
+
+
+def is_strongly_orthogonal(alpha, beta, root_lookup):
+    """True iff alpha +/- beta are NOT roots and alpha != +/- beta.
+
+    *root_lookup* is a ``set`` of rounded root tuples (from
+    :func:`root_lookup` or manual construction).
+    """
+    sum_ab = tuple(np.round(alpha + beta, 4))
+    diff_ab = tuple(np.round(alpha - beta, 4))
+    zero = tuple([0.0] * len(alpha))
+    if sum_ab == zero or diff_ab == zero:
+        return False
+    if sum_ab in root_lookup or diff_ab in root_lookup:
+        return False
+    return True
+
+
+def build_compatibility_matrix(roots, root_lookup_set):
+    """Boolean matrix: compat[i, j] iff roots[i], roots[j] strongly orthogonal."""
+    n = len(roots)
+    compat = np.zeros((n, n), dtype=bool)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if is_strongly_orthogonal(roots[i], roots[j], root_lookup_set):
+                compat[i, j] = True
+                compat[j, i] = True
+    return compat
+
+
+def max_antichain_size(compat):
+    """Size of the maximum clique in the strong-orthogonality graph."""
+    n = compat.shape[0]
+    best = [0]
+    degrees = compat.sum(axis=1)
+    order = np.argsort(-degrees)
+
+    def recurse(current, candidates):
+        if len(current) > best[0]:
+            best[0] = len(current)
+        if len(current) + int(candidates.sum()) <= best[0]:
+            return
+        cand_idx = np.where(candidates)[0]
+        cand_sorted = sorted(cand_idx, key=lambda i: list(order).index(i))
+        for v in cand_sorted:
+            new_cand = candidates.copy()
+            new_cand[v] = False
+            new_cand &= compat[v]
+            current.append(v)
+            recurse(current, new_cand)
+            current.pop()
+            candidates[v] = False
+
+    cand = np.ones(n, dtype=bool)
+    recurse([], cand)
+    return best[0]
+
+
+def count_antichains_of_size(compat, target_size):
+    """Count distinct strongly-orthogonal sets of exactly *target_size*."""
+    n = compat.shape[0]
+    count = [0]
+
+    def recurse(current, next_v):
+        if len(current) == target_size:
+            count[0] += 1
+            return
+        for v in range(next_v, n):
+            ok = True
+            for u in current:
+                if not compat[u, v]:
+                    ok = False
+                    break
+            if ok:
+                current.append(v)
+                recurse(current, v + 1)
+                current.pop()
+
+    recurse([], 0)
+    return count[0]
+
+
+def enumerate_antichains_of_size(compat, target_size, max_count=None):
+    """Enumerate distinct strongly-orthogonal sets of exactly *target_size*.
+
+    Returns a list of tuples ``(i_0, ..., i_{target_size-1})`` of row indices
+    into the boolean compatibility matrix ``compat``.  When ``max_count`` is
+    set, enumeration stops after that many antichains are collected (useful
+    for sampling from a large family — e.g. the 630 size-4 antichains in
+    EIX = E_8 / (E_7 x SU(2))).
+
+    Notes
+    -----
+    Tuples are returned in lexicographic order over the row indices and are
+    therefore canonical (each antichain is represented exactly once).  Use
+    ``e8sim.roots.build_compatibility_matrix`` to obtain a suitable
+    ``compat`` from a list of E_8 roots and a root lookup set.
+    """
+    n = compat.shape[0]
+    out: list[tuple[int, ...]] = []
+
+    def recurse(current, next_v):
+        if max_count is not None and len(out) >= max_count:
+            return
+        if len(current) == target_size:
+            out.append(tuple(current))
+            return
+        for v in range(next_v, n):
+            if max_count is not None and len(out) >= max_count:
+                return
+            ok = True
+            for u in current:
+                if not compat[u, v]:
+                    ok = False
+                    break
+            if ok:
+                current.append(v)
+                recurse(current, v + 1)
+                current.pop()
+
+    recurse([], 0)
+    return out
