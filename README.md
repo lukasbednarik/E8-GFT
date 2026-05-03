@@ -23,7 +23,7 @@ papers, not chronological order; gaps are intentional.
 |---|---|---|
 | 01 | Foundations of an $E_8$ group field theory: action uniqueness, vacuum selection, and a four-dimensional algebraic substrate | [10.5281/zenodo.19843240](https://doi.org/10.5281/zenodo.19843240) |
 | 02 | Effective sigma model of an $E_8$ group field theory: kinetic uniqueness, the Skyrme sector, and topological terms on the Wolf space EIX | [10.5281/zenodo.19843827](https://doi.org/10.5281/zenodo.19843827) |
-| 10 | Notes on the cosmological constant in $E_8$ group field theory | [10.5281/zenodo.19844636](https://doi.org/10.5281/zenodo.19844636) |
+
 
 ## License
 
