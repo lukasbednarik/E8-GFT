@@ -1,6 +1,6 @@
 """Full 630-antichain verdict sweep for EIX = E_8/(E_7 x SU(2)).
 
-Numerical support for Remark ``rem:antichain-equivariance'' in
+Numerical support for the equivariance paragraph ``para:antichain-equivariance'' in
 ``sections/06-emergent-spacetime.tex'': the operational verdicts of
 sub-claims (alpha), (gamma), (epsilon) of Hypothesis~\\ref{hyp:4d-emergence}
 are constant across the full 630-element set of maximal antichains in
@@ -53,7 +53,7 @@ References.
 
   - sections/06-emergent-spacetime.tex:
       Proposition~\\ref{prop:algebraic-4d},
-      Remark~\\ref{rem:antichain-equivariance},
+      \\S~\\ref{para:antichain-equivariance},
       Proposition~\\ref{prop:leading-os-rp},
       Proposition~\\ref{prop:gamma-global-poincare}.
   - e3_orbit_selection.py    (enumeration of the 630 maximal antichains).
@@ -506,7 +506,7 @@ def main(argv: list[str] | None = None) -> int:
     print("=" * 72)
     print("Full 630-antichain verdict sweep for EIX = E_8/(E_7 x SU(2))")
     print("Reference: sections/06-emergent-spacetime.tex, "
-          "rem:antichain-equivariance")
+          "para:antichain-equivariance")
     print("Verifies: constancy of the (alpha)/(gamma)/(epsilon) verdicts on")
     print("          the full maximal-antichain set in Delta(m_EIX^+)")
     print("=" * 72, flush=True)
@@ -599,7 +599,7 @@ def main(argv: list[str] | None = None) -> int:
     print("    confirming antichain-independence at the operational level.")
     print("  - C3 ([X_mu, X_nu] = 0; sub-claim (epsilon) of")
     print("    Hypothesis~\\ref{hyp:4d-emergence}) holds numerically on every")
-    print("    antichain, supporting Remark~\\ref{rem:antichain-equivariance}")
+    print("    antichain, supporting \\S~\\ref{para:antichain-equivariance}")
     print("    without invoking analytic transitivity of the residual")
     print("    E_7 x SU(2) action.")
     return 0

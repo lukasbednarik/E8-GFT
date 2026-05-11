@@ -63,7 +63,7 @@ Tests (seven layered):
            $f$-tensor invariants ($S_c, S_{c'}, S_e$) may reduce this
            to $W(F_4)\\subset\\mathrm{O}(4)$ at sub-leading order. The
            full $\\mathcal{D}_{\\mathrm{stab}}$-boundary verdict
-           remains \\textsf{[Open]} per Remark~\\ref{rem:r3-status}.
+           remains \\textsf{[Open]} per Proposition~\\ref{prop:full-os-rp-interior}.
 
 References:
   - Osterwalder, Schrader, *Comm. Math. Phys.* **31** (1973) 83;
@@ -1293,12 +1293,12 @@ def main() -> int:
     print("  7. OSB.7 PASS: continuous O(4) preserved by C_2, C_2², H_2, S_a,")
     print("     H_2^grad (leading + manifest-positivity sub-leading);")
     print("     residual W(F_4) verdict for S_c, S_{c'}, S_e remains [Open]")
-    print("     per Remark~rem:r3-status.")
+    print("     per Proposition~prop:full-os-rp-interior.")
     print()
     print("What this script does NOT do:")
     print("  • Does not sweep the full D_stab boundary; the sign verdict for")
     print("    the f-tensor invariants S_c, S_{c'}, S_e on the boundary")
-    print("    remains [Open] (Remark~rem:r3-status, sub-claim (α) residual).")
+    print("    remains [Open] (Proposition~prop:full-os-rp-interior, sub-claim (α) residual).")
     print("  • The lattice realisation is the free-Gaussian Markov regime")
     print("    on a 6^4 lattice; the full interacting-lattice Monte Carlo with")
     print("    ξ⁴ vertex on the same lattice is separate future work.")

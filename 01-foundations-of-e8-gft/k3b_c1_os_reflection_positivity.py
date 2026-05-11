@@ -8,7 +8,7 @@ This script implements the numerical verification cited under
 Hypothesis~\\ref{hyp:4d-emergence}). Together with the Glimm--Jaffe
 sufficiency analysis of ``k3b_os_b_full_interacting.py`` it covers
 the leading + manifest-positivity sub-leading content of $(\\alpha)$
-recorded in Table~\\ref{tab:hyp-subclaims} of that section.
+recorded in the status list of \\S~\\ref{sec:emergent:hyp} of that section.
 
 Theoretical setup (a one-paragraph summary of
 \\S\\ref{sec:emergent:alpha}). The compact $E_8$-GFT of
@@ -57,7 +57,7 @@ numbers; the kinetic/mass data are imported from
         of maximal antichains in $\\Delta(\\mathfrak{m}_{\\mathrm{EIX}}^+)$
         (Corollary~\\ref{cor:antichain-EIX}), confirming that the
         verdict does not depend on the antichain choice
-        (Remark~\\ref{rem:antichain-equivariance}; full $630$-sweep
+        (\\S~\\ref{para:antichain-equivariance}; full $630$-sweep
         is performed by ``e3_antichain_full_sweep.py``).
 
   OS.7  Wick rotation $p^{\\,0}\\to -i\\,E$ produces the Lorentzian
@@ -70,13 +70,15 @@ A positive verdict on OS.3--OS.7 closes the leading bosonic Gaussian
 content of sub-claim $(\\alpha)$: by Glimm--Jaffe Theorem~6.2.2 a
 Gaussian Euclidean QFT with positive-definite kinetic operator and
 positive mass-squared is automatically reflection-positive
-(Remark~\\ref{rem:glimm-jaffe-622}); the OS theorem then delivers a
+(the explicit Kallén--Lehmann form is recorded in the proof of
+Proposition~\\ref{prop:leading-os-rp}); the OS theorem then delivers a
 Lorentzian Wightman QFT for the slow-mode two-point function with
 the Poincaré representation of
 Proposition~\\ref{prop:gamma-global-poincare}. The $f$-tensor
 sub-leading invariants $\\mathcal{S}_c$, $\\mathcal{S}_{c'}$,
 $\\mathcal{S}_e$ on the $\\mathcal{D}_{\\mathrm{stab}}$-boundary
-remain \\textsf{[Open]} (Remark~\\ref{rem:r3-status}); they are not
+remain \\textsf{[Open]}
+(Proposition~\\ref{prop:full-os-rp-interior}); they are not
 in scope here.
 
 Conventions (shared with ``e8sim/eix.py`` and ``k3b_volovik_signature.py``):
@@ -710,7 +712,7 @@ def main() -> int:
     print()
     print("  → Out of scope here:")
     print("    • the full D_stab-boundary verdict for the sub-leading f-tensor")
-    print("      invariants S_c, S_{c'}, S_e (rem:r3-status, [Open]);")
+    print("      invariants S_c, S_{c'}, S_e (prop:full-os-rp-interior, [Open]);")
     print("    • non-perturbative RP for the full path integral on E_8")
     print("      (constructive QFT on the group manifold).")
 

@@ -133,7 +133,7 @@ def test_T3_4_EIX_count630(pos_roots: np.ndarray, all_roots: np.ndarray,
     # The 630-element set is the support of the e3_antichain_full_sweep.py
     # sweep verifying the per-antichain constancy of the (alpha)/(gamma)/
     # (epsilon) verdicts (paragraph after Corollary~``cor:antichain-EIX''
-    # and Remark~``rem:antichain-equivariance'' in section 6).
+    # and the equivariance paragraph ``para:antichain-equivariance'' in section 6).
     res.report(
         "number of size-4 antichains in Delta(m_EIX^+) = 630",
         count == 630,
