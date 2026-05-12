@@ -22,7 +22,9 @@ papers, not chronological order; gaps are intentional.
 |---|---|---|
 | 01 | Foundations of an $E_8$ group field theory: action uniqueness, vacuum selection, and a four-dimensional algebraic substrate | [10.5281/zenodo.19843240](https://doi.org/10.5281/zenodo.19843240) |
 | 02 | Effective sigma model of an $E_8$ group field theory: kinetic uniqueness, the Skyrme sector, and topological terms on the Wolf space EIX | [10.5281/zenodo.19843827](https://doi.org/10.5281/zenodo.19843827) |
-| 03 | Emergent fermion sector of an $E_8$ group field theory: three generations, and Hopfion statistics on the Wolf space EIX | TBD |
+| 03 | Emergent fermion sector of an $E_8$ group field theory: three generations, and Hopfion statistics on the Wolf space EIX | [10.5281/zenodo.20132918](https://doi.org/10.5281/zenodo.20132918) |
+| 05 | The second Seeley–DeWitt coefficient of the scalar Laplacian on the $E_8$ Wolf space EIX | [10.5281/zenodo.20136113](https://doi.org/10.5281/zenodo.20136113) |
+ 
 
 
 ## License

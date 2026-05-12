@@ -1,4 +1,4 @@
-"""Shared infrastructure for debug-plan scripts E0–E9.
+"""Shared infrastructure for scripts.
 
 Provides a unified test-reporting class, banner printer, and repository
 root bootstrapper so that each script does not have to re-implement them.

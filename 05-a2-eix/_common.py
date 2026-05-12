@@ -1,4 +1,4 @@
-"""Shared infrastructure for scripts.
+"""Shared infrastructure for verification scripts.
 
 Provides a unified test-reporting class, banner printer, and repository
 root bootstrapper so that each script does not have to re-implement them.
@@ -11,18 +11,15 @@ from pathlib import Path
 
 
 def bootstrap_repo_root() -> Path:
-    """Return the absolute scripts root and ensure ``e8sim`` is importable.
+    """Return the absolute repo root and ensure ``e8sim`` is importable.
 
     The publication layout is::
 
         <ROOT>/
           e8sim/
-          01-foundations-of-e8-gft/
-            _common.py   ← this file
-            e0_algebra_base.py
-            ...
-
-    So ROOT = THIS.parent.parent.
+          05-a2-eix/
+            _common.py   <- this file
+            a2_eix.py
     """
     root = Path(__file__).resolve().parent.parent
     if str(root) not in sys.path:
@@ -30,8 +27,6 @@ def bootstrap_repo_root() -> Path:
     return root
 
 
-# Auto-bootstrap on import so that submodules of e8sim are importable from
-# this module (single source of truth for shared constants below).
 bootstrap_repo_root()
 
 from e8sim.eix import DIM_E8  # noqa: E402,F401
