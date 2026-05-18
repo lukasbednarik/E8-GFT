@@ -35,3 +35,6 @@ Thumbs.db
 *.nav
 *.snm
 *.vrb
+
+# Results of verification scripts
+results/
