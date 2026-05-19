@@ -1,5 +1,7 @@
 # E8-GFT
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20290480.svg)](https://doi.org/10.5281/zenodo.20290480)
+
 Numerical verification scripts and supporting code for a series of
 working papers on a group field theory of the compact real form of the
 exceptional Lie group $E_8$.
