@@ -1,4 +1,4 @@
-"""E3 -- Maximal antichains in Delta(m^+) for the EIX orbit.
+"""Maximal antichains in Delta(m^+) for the EIX orbit.
 
 Numerical verification of the rank/antichain content of
 ``sections/06-emergent-spacetime.tex``:

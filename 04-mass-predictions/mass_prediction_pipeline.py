@@ -1,4 +1,4 @@
-"""Krok B+C+D: Fermion mass prediction pipeline.
+"""Step B+C+D: Fermion mass prediction pipeline.
 
 Full mass formula:
 

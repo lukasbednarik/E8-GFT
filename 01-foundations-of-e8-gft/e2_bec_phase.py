@@ -1,4 +1,4 @@
-"""E2 — symmetry-breaking vacuum (BEC analogue).
+"""Symmetry-breaking vacuum (BEC analogue).
 
 Numerical certificates for the tree-level content of the condensate
 section ``sections/04-condensate.tex``. The Cas_2 truncated potential

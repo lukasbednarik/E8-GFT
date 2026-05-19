@@ -1,4 +1,4 @@
-r"""Numerical evaluation of ``V_ind^(EIX) = 432/3 = 144`` (Camporesi--Higuchi
+"""Numerical evaluation of ``V_ind^(EIX) = 432/3 = 144`` (Camporesi--Higuchi
 spectral zeta on EIX).
 
 Provides the ``[Proven-num, leading + sub-leading]`` evidence cited in

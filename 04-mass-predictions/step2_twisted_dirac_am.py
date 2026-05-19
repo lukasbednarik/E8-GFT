@@ -427,22 +427,22 @@ def main() -> int:
     psi_twisted = 1.0 / (xi**2 + alpha**2)**1.5
 
     # Normalize both to unit L² norm over [0, inf)
-    norm_bpst = np.trapz(psi_bpst**2 * xi**2, xi) * 4 * np.pi
-    norm_twisted = np.trapz(psi_twisted**2 * xi**2, xi) * 4 * np.pi
+    norm_bpst = np.trapezoid(psi_bpst**2 * xi**2, xi) * 4 * np.pi
+    norm_twisted = np.trapezoid(psi_twisted**2 * xi**2, xi) * 4 * np.pi
 
     psi_bpst_n = psi_bpst / np.sqrt(norm_bpst)
     psi_twisted_n = psi_twisted / np.sqrt(norm_twisted)
 
     # RMS radius comparison
-    rms_bpst = np.sqrt(np.trapz(psi_bpst_n**2 * xi**4, xi) * 4 * np.pi)
-    rms_twisted = np.sqrt(np.trapz(psi_twisted_n**2 * xi**4, xi) * 4 * np.pi)
+    rms_bpst = np.sqrt(np.trapezoid(psi_bpst_n**2 * xi**4, xi) * 4 * np.pi)
+    rms_twisted = np.sqrt(np.trapezoid(psi_twisted_n**2 * xi**4, xi) * 4 * np.pi)
 
     print(f"  BPST (unperturbed):  ⟨r²⟩^{1/2} = {rms_bpst:.4f} λ")
     print(f"  Twisted (q²=1/6):    ⟨r²⟩^{1/2} = {rms_twisted:.4f} λ")
     print(f"  Ratio: {rms_twisted/rms_bpst:.4f}")
 
     # Overlap between BPST and twisted
-    overlap_profiles = np.trapz(psi_bpst_n * psi_twisted_n * xi**2, xi) * 4 * np.pi
+    overlap_profiles = np.trapezoid(psi_bpst_n * psi_twisted_n * xi**2, xi) * 4 * np.pi
     print(f"  ⟨ψ_BPST | ψ_twisted⟩ = {overlap_profiles:.6f}")
     print(f"  (1.0 = identical; deviation = profile modification)")
 

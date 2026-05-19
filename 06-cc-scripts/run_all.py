@@ -2,11 +2,17 @@
 
 Usage::
 
-    python run_all.py
+    python3 run_all.py           # full run
+    python3 run_all.py --quick   # fast smoke test (CI-friendly)
 
 Preflight checks: Python >= 3.10, numpy, torch.
 Scripts are executed in lexicographic order; a non-zero exit code is
 recorded but does not abort the whole run.
+
+The ``--quick`` flag is propagated to scripts that support it:
+  - do5b_explicit_log_det.py  → --quick
+  - do5b_helgason_spherical_enum.py → --skip-fund-3 --skip-fund-2
+  - m4c_spectral_sum.py → --max-lambda-sq 400
 """
 
 from __future__ import annotations
@@ -21,6 +27,12 @@ HERE = Path(__file__).resolve().parent
 
 MIN_PYTHON = (3, 10)
 REQUIRED_LIBS = ("numpy", "torch")
+
+QUICK_ARGS: dict[str, list[str]] = {
+    "do5b_explicit_log_det.py": ["--quick"],
+    "do5b_helgason_spherical_enum.py": ["--skip-fund-3", "--skip-fund-2"],
+    "m4c_spectral_sum.py": ["--max-lambda-sq", "400"],
+}
 
 
 def _print_banner(title: str) -> None:
@@ -68,17 +80,19 @@ def discover_scripts() -> list[Path]:
     return scripts
 
 
-def run_script(script: Path) -> tuple[int, float]:
+def run_script(script: Path, extra_args: list[str] | None = None) -> tuple[int, float]:
+    cmd = [sys.executable, str(script)] + (extra_args or [])
     t0 = time.time()
-    proc = subprocess.run(
-        [sys.executable, str(script)],
-        cwd=str(HERE),
-    )
+    proc = subprocess.run(cmd, cwd=str(HERE))
     return proc.returncode, time.time() - t0
 
 
 def main() -> int:
+    quick = "--quick" in sys.argv[1:]
+
     _print_banner("Preflight")
+    if quick:
+        print("  mode   : --quick (CI smoke test)")
     check_python()
     check_libs()
     scripts = discover_scripts()
@@ -93,8 +107,10 @@ def main() -> int:
 
     results: list[tuple[str, int, float]] = []
     for script in scripts:
-        _print_banner(f"Running {script.name}")
-        rc, elapsed = run_script(script)
+        extra = QUICK_ARGS.get(script.name, []) if quick else []
+        _print_banner(f"Running {script.name}"
+                      + (f"  {extra}" if extra else ""))
+        rc, elapsed = run_script(script, extra)
         results.append((script.name, rc, elapsed))
         status = "OK" if rc == 0 else f"FAIL (exit {rc})"
         print(f"\n  -> {status} in {elapsed:.1f}s", flush=True)

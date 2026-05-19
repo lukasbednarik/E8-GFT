@@ -1,4 +1,4 @@
-"""E0 — Algebraic base of E_8.
+"""Algebraic base of E_8.
 
 Numerical certificate for the structural data assumed by Postulate P1
 (``post:algebra``) and the Lie-algebra normalisation fixed in

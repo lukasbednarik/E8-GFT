@@ -1,4 +1,4 @@
-"""Run every verification script for Paper 04 (mass predictions).
+"""Run every verification script for Paper 05 (a_2 on EIX).
 
 Usage::
 
@@ -16,9 +16,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 
 SCRIPTS = [
-    "step1_e7_rep_54modes.py",
-    "step2_twisted_dirac_am.py",
-    "mass_prediction_pipeline.py",
+    "a2_eix.py",
 ]
 
 
@@ -30,7 +28,7 @@ def _print_banner(title: str) -> None:
 def main() -> int:
     quick = "--quick" in sys.argv[1:]
 
-    _print_banner("Paper 04: Mass predictions — verification suite")
+    _print_banner("Paper 05: a_2 on EIX — verification suite")
     if quick:
         print("  mode   : --quick (CI smoke test)")
 

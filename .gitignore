@@ -12,6 +12,9 @@ dist/
 venv/
 env/
 
+# Generated data (reproducible via e8sim/generate_e8_constants.py)
+e8sim/e8_constants.pt
+
 # Jupyter
 .ipynb_checkpoints/
 
@@ -21,6 +24,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+.cursor/
 
 # LaTeX build artifacts
 *.aux

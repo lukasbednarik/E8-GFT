@@ -34,6 +34,7 @@ The two tests, in execution order:
 
 from __future__ import annotations
 
+import argparse
 import sys
 import time
 from pathlib import Path
@@ -139,7 +140,7 @@ def compute_4_4_candidates(M: np.ndarray, F: np.ndarray,
     return cands
 
 
-def test_4_4_completeness() -> bool:
+def test_4_4_completeness(n_samples: int = 6) -> bool:
     banner("(4,4) sector — completeness: rank({S_a, S_b, S_c, S_c', S_e}) = 5")
     print("Prediction: dim^{(4,4)} = 5 with generators "
           "{S_a, S_b, S_c, S_c', S_e}", flush=True)
@@ -150,8 +151,6 @@ def test_4_4_completeness() -> bool:
 
     F = load_F()
     rng = np.random.default_rng(0xCAFE_BEEF)
-
-    n_samples = 6
     sample_dicts = []
     t0 = time.time()
     for i in range(n_samples):
@@ -237,7 +236,7 @@ def compute_4_2_candidates(Phi: np.ndarray, M: np.ndarray, F: np.ndarray) -> dic
 EXPECTED_DIM_4_2 = 3  # Cauchy–Howe plethysm, eq. \eqref{eq:plethysm-42-app}
 
 
-def test_4_2_classification() -> bool:
+def test_4_2_classification(n_samples: int = 8) -> bool:
     banner(f"(4, 2) sector — completeness "
            f"(paper predicts dim = {EXPECTED_DIM_4_2})")
     print("Generators from the paper (Lemma 'Catalogue', tab:nk-catalogue):")
@@ -245,8 +244,6 @@ def test_4_2_classification() -> bool:
           flush=True)
     F = load_F()
     rng = np.random.default_rng(0x4242)
-
-    n_samples = 8
     rows = []
     for _ in range(n_samples):
         Phi = rng.standard_normal(DIM_E8)
@@ -286,18 +283,28 @@ def test_4_2_classification() -> bool:
 # ----------------------------------------------------------------------
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--quick", action="store_true",
+                        help="Reduce sample count for faster CI runs")
+    args = parser.parse_args()
+
     print("=" * 70)
     print("Numerical rank certificates for plethysm dimensions of (n,k) sectors")
     print("Reference: sections/03-action.tex (lem:nk-catalogue, tab:nk-catalogue)")
     print("           sections/A2-uniqueness-proof.tex (eq:plethysm-{42,44}-app)")
+    if args.quick:
+        print("Mode: --quick (reduced samples)")
     print("=" * 70, flush=True)
+
+    n_44 = 6 if not args.quick else 5
+    n_42 = 8 if not args.quick else 4
 
     results: list[tuple[str, bool]] = []
 
-    ok_44 = test_4_4_completeness()
+    ok_44 = test_4_4_completeness(n_samples=n_44)
     results.append(("(4,4) completeness (test_4_4_completeness)", ok_44))
 
-    ok_42 = test_4_2_classification()
+    ok_42 = test_4_2_classification(n_samples=n_42)
     results.append(("(4,2) classification (test_4_2_classification)", ok_42))
 
     print("\n" + "=" * 70)

@@ -1,4 +1,4 @@
-r"""Explicit log-determinant ``det'(-Δ_EIX)`` and BV-BRST input for the
+"""Explicit log-determinant ``det'(-Δ_EIX)`` and BV-BRST input for the
 Sakharov coefficient ``V_ind^(EIX)``.
 
 Provides the **[Proven-mat, BV-BRST] input** cited in the proof of

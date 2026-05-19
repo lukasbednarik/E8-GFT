@@ -2,7 +2,8 @@
 
 Usage::
 
-    python run_all.py
+    python3 run_all.py           # full run
+    python3 run_all.py --quick   # fast smoke test (CI-friendly)
 
 The runner performs three preflight checks before executing anything:
 
@@ -111,7 +112,11 @@ def run_script(script: Path) -> tuple[int, float]:
 
 
 def main() -> int:
+    quick = "--quick" in sys.argv[1:]
+
     _print_banner("Preflight")
+    if quick:
+        print("  mode   : --quick (CI smoke test)")
     check_python()
     check_libs()
     scripts = discover_scripts()

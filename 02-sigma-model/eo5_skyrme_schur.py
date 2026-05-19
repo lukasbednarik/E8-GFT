@@ -1,4 +1,4 @@
-"""eo5_skyrme_schur.py -- numerical cross-check of the tree-level Schur
+"""Numerical cross-check of the tree-level Schur
 factor for the Skyrme term on EIX.
 
 This script verifies the identity ``eq:quartic:cH-prime`` of

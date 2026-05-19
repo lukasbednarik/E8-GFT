@@ -38,7 +38,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parent.parent.parent.parent
+REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from e8sim.eix import DIM_E8, H_VEE_E8, C_H_EIX  # noqa: E402
@@ -315,7 +315,7 @@ def main() -> int:
     print("=" * 72)
 
     # Save results
-    out_path = REPO / "research" / "01-cc" / "results" / "m4c_kappa_normalization.json"
+    out_path = REPO / "results" / "m4c_kappa_normalization.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     kappa_best = 2.0 * CC_PDG * FOUR_PI_56 * N_EIX_PIC2_SQ / A2_EIX
     cc_at_1 = 0.5 * A2_EIX / (FOUR_PI_56 * N_EIX_PIC2_SQ)

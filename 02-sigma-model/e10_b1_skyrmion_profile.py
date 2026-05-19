@@ -367,7 +367,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--lambda_sk", type=float, default=1.0)
     p.add_argument("--mu4", type=float, default=0.0)
     p.add_argument("--kappa_B", type=float, default=1000.0)
-    p.add_argument("--max_iter", type=int, default=2000)
+    p.add_argument("--max_iter", type=int, default=4000)
     return p.parse_args(argv)
 
 

@@ -1,6 +1,7 @@
 # E8-GFT
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20290480.svg)](https://doi.org/10.5281/zenodo.20290480)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20290480-blue)](https://doi.org/10.5281/zenodo.20290480)
+[![Verification](https://github.com/lukasbednarik/E8-GFT/actions/workflows/verify.yml/badge.svg)](https://github.com/lukasbednarik/E8-GFT/actions/workflows/verify.yml)
 
 Numerical verification scripts and supporting code for a series of
 working papers on a group field theory of the compact real form of the

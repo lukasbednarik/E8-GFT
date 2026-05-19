@@ -16,7 +16,7 @@ Uses e8sim infrastructure; runs in < 5 s.
 import sys, os, json, time
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent.parent.parent
+REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 import numpy as np

@@ -1,4 +1,4 @@
-"""e5_topology.py -- numerical cross-check for the topological structure
+"""Numerical cross-check for the topological structure
 of EIX = E_8 / (E_7 x SU(2)) entering section ``sec:topology'' of
 
     "Effective sigma model of an E_8 group field theory: kinetic

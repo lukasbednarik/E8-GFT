@@ -1,4 +1,4 @@
-"""E1 — Numerical certificate for the action-uniqueness theorem.
+"""Numerical certificate for the action-uniqueness theorem.
 
 Provides the [Proven-num] certificate for the structural ingredients of
 Theorem~\\ref{thm:action} (form of the E_8-GFT action) as stated in

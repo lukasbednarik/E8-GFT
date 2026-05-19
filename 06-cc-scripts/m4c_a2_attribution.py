@@ -31,7 +31,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parent.parent.parent.parent
+REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "debug_plan" / "scripts"))
 
@@ -375,7 +375,7 @@ def main() -> int:
     print(f"M4(c) §5.4:  {res.passed} PASS / {res.failed} FAIL  (~{elapsed:.1f} s)")
     print("=" * 74)
 
-    out_path = REPO / "research" / "01-cc" / "results" / "m4c_a2_attribution.json"
+    out_path = REPO / "results" / "m4c_a2_attribution.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     cc_half = 0.5 * A2_EIX / (FOUR_PI_56 * N_EIX_PIC2_SQ)
     record = {

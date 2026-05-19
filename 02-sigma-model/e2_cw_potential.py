@@ -1,4 +1,4 @@
-"""e2_cw_potential.py -- numerical cross-check for the orbit-constancy of
+"""Numerical cross-check for the orbit-constancy of
 the leading 1-loop Coleman--Weinberg potential on EIX.
 
 This script verifies the claim of equation

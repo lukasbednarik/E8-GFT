@@ -1,4 +1,4 @@
-"""E1 — Numerical certificates for the structural hypotheses underlying
+"""Numerical certificates for the structural hypotheses underlying
 ``Theorem~\\ref{thm:action}`` (form of the E_8-GFT action) in
 ``sections/03-action.tex``.
 

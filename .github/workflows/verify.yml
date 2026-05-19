@@ -1,0 +1,39 @@
+name: Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        paper:
+          - "01-foundations-of-e8-gft"
+          - "02-sigma-model"
+          - "04-mass-predictions"
+          - "05-a2-eix"
+          - "06-cc-scripts"
+
+    name: "Paper ${{ matrix.paper }}"
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install numpy scipy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Generate e8_constants.pt
+        run: python e8sim/generate_e8_constants.py
+
+      - name: Run verification (--quick)
+        run: python ${{ matrix.paper }}/run_all.py --quick

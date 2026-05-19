@@ -1,4 +1,4 @@
-"""eo1_q1_sp1_holonomy.py -- numerical cross-check identifying the
+"""Numerical cross-check identifying the
 projection target pi_{su(2)} of definition ``def:B-charge`` with the
 Sp(1)-factor of the Wolf-space holonomy of EIX = E_8/(E_7 x SU(2)),
 referenced in section ``sec:topology:B-charge'' of

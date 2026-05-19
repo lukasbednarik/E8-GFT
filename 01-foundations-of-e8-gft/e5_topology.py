@@ -1,4 +1,4 @@
-"""E5 — Topology of EIX (numerical verification of Theorem on lower homotopy).
+"""Topology of EIX (numerical verification of Theorem on lower homotopy).
 
 Numerical verification of the topological structure of the orbit
 ``EIX = E_8 / (E_7 x SU(2))`` referenced in

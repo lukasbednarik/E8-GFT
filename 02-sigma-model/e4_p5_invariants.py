@@ -1,4 +1,4 @@
-"""e4_p5_invariants.py -- Schur uniqueness on Sym^2 m and the (4,4) quartic
+"""Schur uniqueness on Sym^2 m and the (4,4) quartic
 invariants on the Wolf-space orbit EIX.
 
 Numerical cross-checks for

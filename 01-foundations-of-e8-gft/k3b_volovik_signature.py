@@ -1,4 +1,4 @@
-"""K3b — Slow-mode kinetic data on $\\mathfrak{a}\\subset\\mathfrak{m}_{\\mathrm{EIX}}$.
+"""Slow-mode kinetic data on $\\mathfrak{a}\\subset\\mathfrak{m}_{\\mathrm{EIX}}$.
 
 Numerical construction and verification of the slow-mode kinetic
 matrix $K^{\\mu\\nu}$ and Higgs--Schur mass $M_W^{\\,2}$ on the

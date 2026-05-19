@@ -13,7 +13,11 @@
 
 Usage::
 
-    python3 run_all.py
+    python3 run_all.py           # full run
+    python3 run_all.py --quick   # fast smoke test (CI-friendly)
+
+The ``--quick`` flag is propagated to scripts that support it
+(currently ``e3_antichain_full_sweep.py``).
 
 Return code: 0 if all scripts PASS, 1 otherwise.
 """
@@ -54,6 +58,11 @@ SCRIPTS_ORDER: tuple[str, ...] = (
 )
 
 EXCLUDE: frozenset[str] = frozenset({"_common.py", "__init__.py"})
+
+QUICK_ARGS: dict[str, list[str]] = {
+    "e1_open_points.py": ["--quick"],
+    "e3_antichain_full_sweep.py": ["--quick"],
+}
 
 THIS_DIR: Path = Path(__file__).resolve().parent
 SCRIPTS_ROOT: Path = THIS_DIR.parent
@@ -153,16 +162,21 @@ def discover_scripts() -> list[Path]:
     return [THIS_DIR / n for n in ordered]
 
 
-def run_one(script: Path) -> tuple[bool, float]:
+def run_one(script: Path, extra_args: list[str] | None = None) -> tuple[bool, float]:
+    cmd = [sys.executable, str(script)] + (extra_args or [])
     t0 = time.time()
-    proc = subprocess.run([sys.executable, str(script)], cwd=THIS_DIR)
+    proc = subprocess.run(cmd, cwd=THIS_DIR)
     return proc.returncode == 0, time.time() - t0
 
 
 def main() -> int:
+    quick = "--quick" in sys.argv[1:]
+
     _section("Foundations of an E_8 GFT — verification script runner")
     print(f"  working directory : {THIS_DIR}")
     print(f"  scripts root      : {SCRIPTS_ROOT}")
+    if quick:
+        print(f"  mode              : --quick (CI smoke test)")
 
     _section("[1/3] Environment check")
     py_ok = check_python()
@@ -186,8 +200,10 @@ def main() -> int:
     results: list[tuple[str, bool, float]] = []
     t_total = time.time()
     for i, script in enumerate(scripts, 1):
-        _section(f"[{i}/{len(scripts)}] {script.name}")
-        ok, dt = run_one(script)
+        extra = QUICK_ARGS.get(script.name, []) if quick else []
+        _section(f"[{i}/{len(scripts)}] {script.name}"
+                 + (f"  {extra}" if extra else ""))
+        ok, dt = run_one(script, extra)
         marker = "PASS" if ok else "FAIL"
         print(f"\n  → [{marker}] {script.name}  ({dt:.1f}s)", flush=True)
         results.append((script.name, ok, dt))

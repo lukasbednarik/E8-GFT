@@ -660,7 +660,7 @@ def besselk1(x: np.ndarray) -> np.ndarray:
         cosh_t = np.cosh(t)
         exp_arg = np.clip(-np.outer(x_s, cosh_t), -700.0, 0.0)
         integrand = np.exp(exp_arg) * cosh_t[None, :]
-        out[small] = np.trapz(integrand, t, axis=1)
+        out[small] = np.trapezoid(integrand, t, axis=1)
 
     if np.any(large):
         x_l = x_flat[large]
