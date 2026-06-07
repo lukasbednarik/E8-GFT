@@ -4,7 +4,7 @@ TL;DR:  python3 a2_eix.py
 
 Computes the heat-kernel coefficient a_2 of the scalar Laplacian on
 EIX = E_8/(E_7 x SU(2)) via the Schur-lemma structure of the Riemann
-tensor.  The result is a_2 = 1175384/15.
+tensor.  The result is a_2 = 587692/15.
 
 This script accompanies the paper "The second Seeley-DeWitt coefficient
 of the scalar Laplacian on the E_8 Wolf space EIX".  It provides an
@@ -19,10 +19,11 @@ Method:
   5. Verify K is block-diagonal with eigenvalues c_{E_7}=12, c_{SU(2)}=28
      (in kappa-orthonormal convention: c_{H_i} = h^v_G - h^v_{H_i}).
   6. Compute |Riem|^2 = ||K||_F^2 = 21504.
-  7. Apply the Vassilevich formula: a_2 = (5R^2 - 2|Ric|^2 + 2|Riem|^2)/180.
+  7. Apply the Vassilevich formula: a_2 = (5R^2 - 2|Ric|^2 + 2|Riem|^2)/360.
 
 References:
-  - Vassilevich 2003, Phys. Rep. 388, 279, eq. (3.15).
+  - Vassilevich 2003, Phys. Rep. 388, 279, eq. (4.28) (scalar Laplacian:
+    E = 0, Omega = 0); Seeley-DeWitt indexing a_2 = (4 pi)^{n/2} a_4^V.
   - Helgason 1978, Ch. IV.4 (curvature on symmetric spaces).
 """
 
@@ -80,9 +81,9 @@ RIEM_NORM_SQ_PRED = (DIM_E7 * C_E7_PRED**2
                      + DIM_SU2 * C_SU2_PRED**2)  # 21504
 A1 = R_SCALAR / 6  # 280
 A2_NUM = 5 * int(R_SCALAR)**2 - 2 * int(RIC_NORM_SQ) + 2 * RIEM_NORM_SQ_PRED
-A2_DENOM = 180
+A2_DENOM = 360
 A2_GCD = math.gcd(A2_NUM, A2_DENOM)
-A2_RED_NUM = A2_NUM // A2_GCD      # 1175384
+A2_RED_NUM = A2_NUM // A2_GCD      # 587692
 A2_RED_DEN = A2_DENOM // A2_GCD    # 15
 
 TOL = 1e-9
@@ -207,18 +208,18 @@ def test_riem_norm_sq(g, res: Result) -> None:
 
 
 def test_a2(g, res: Result) -> None:
-    """T5: Vassilevich a_2 = (5R^2 - 2|Ric|^2 + 2|Riem|^2) / 180."""
+    """T5: Vassilevich a_2 = (5R^2 - 2|Ric|^2 + 2|Riem|^2) / 360."""
     banner("[T5] Vassilevich a_2(EIX)")
 
     R = g["R"]
     ric_sq = g["Ric_norm_sq"]
     riem_sq = g["Riem_norm_sq"]
 
-    a2 = (5 * R**2 - 2 * ric_sq + 2 * riem_sq) / 180.0
+    a2 = (5 * R**2 - 2 * ric_sq + 2 * riem_sq) / 360.0
     a2_exact = A2_RED_NUM / A2_RED_DEN
 
-    print(f"    a_2 = (5*{R:.0f}^2 - 2*{ric_sq:.0f} + 2*{riem_sq:.0f}) / 180")
-    print(f"        = {5*R**2 - 2*ric_sq + 2*riem_sq:.0f} / 180")
+    print(f"    a_2 = (5*{R:.0f}^2 - 2*{ric_sq:.0f} + 2*{riem_sq:.0f}) / 360")
+    print(f"        = {5*R**2 - 2*ric_sq + 2*riem_sq:.0f} / 360")
     print(f"        = {A2_RED_NUM}/{A2_RED_DEN} = {a2_exact:.10f}")
 
     res.report(
