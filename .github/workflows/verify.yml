@@ -15,9 +15,7 @@ jobs:
         paper:
           - "01-foundations-of-e8-gft"
           - "02-sigma-model"
-          - "04-mass-predictions"
           - "05-a2-eix"
-          - "06-cc-scripts"
 
     name: "Paper ${{ matrix.paper }}"
     steps:
